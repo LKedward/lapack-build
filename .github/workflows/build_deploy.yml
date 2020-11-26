@@ -71,4 +71,5 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: lapack*/build/liblapack*
         file_glob: true
+        tag: binary_upload
         overwrite: true
