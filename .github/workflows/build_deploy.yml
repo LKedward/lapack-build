@@ -36,6 +36,7 @@ jobs:
         install: >-
           git
           tar
+          zip
           make
           mingw64/mingw-w64-x86_64-gcc
           mingw64/mingw-w64-x86_64-gcc-fortran
@@ -43,24 +44,31 @@ jobs:
     #- run: git config --global core.autocrlf input
     #  shell: bash
     - uses: actions/checkout@v2
-    
-    - run: pwd
         
-    - run: wget ${LAPACK_UPSTREAM}${LAPACK_VERSION}.tar.gz
+    - name: Fetch LAPACK source
+      run: wget ${LAPACK_UPSTREAM}${LAPACK_VERSION}.tar.gz
     
-    - run: tar xzf ${LAPACK_VERSION}.tar.gz
+    - name: Extract source
+      run: tar xzf ${LAPACK_VERSION}.tar.gz
     
     - name: Build (cmake) and test (ctest)
       run: |
         cd lapack*
         mkdir build
         cd build
-        mkdir install
-        /mingw64/bin/cmake -DCMAKE_INSTALL_LIBDIR=/home/lk12325/test/lapack-3.9.0/build/install/ .. -G"MSYS Makefiles" -DBUILD_TESTING=1
-        make -j install
+        /mingw64/bin/cmake .. -G"MSYS Makefiles" -DBUILD_TESTING=1
+        make -j
         ctest
         
-#     - name: Package up outputs
-#       run: |
-#         cd lapack*/build/install
-        
+    - name: Stage libraries for release
+      run: |
+        cd lapack*/build
+        zip -r liblapack-v${LAPACK_VERSION}-Windows-x86_64-gcc10.zip lib/*
+    
+    - name: Upload assets
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: lapack*/build/liblapack*
+        file_glob: true
+        overwrite: true
