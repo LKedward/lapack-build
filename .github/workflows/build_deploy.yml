@@ -43,7 +43,7 @@ jobs:
     #  shell: bash
     - uses: actions/checkout@v2
     
-    - run: git describe --dirty
+    - run: pwd
         
     - run: wget ${LAPACK_UPSTREAM}${LAPACK_VERSION}.tar.gz
     
