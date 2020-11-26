@@ -55,7 +55,7 @@ jobs:
         mkdir build
         cd build
         mkdir install
-        cmake -DCMAKE_INSTALL_LIBDIR=/home/lk12325/test/lapack-3.9.0/build/install/ .. -G"MSYS Makefiles" -DBUILD_TESTING=1
+        /mingw64/bin/cmake -DCMAKE_INSTALL_LIBDIR=/home/lk12325/test/lapack-3.9.0/build/install/ .. -G"MSYS Makefiles" -DBUILD_TESTING=1
         ctest
         
 #     - name: Package up outputs
