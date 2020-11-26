@@ -1,0 +1,64 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  LAPACK_VERSION: v3.9.0
+  LAPACK_UPSTREAM: https://github.com/Reference-LAPACK/lapack/archive/
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+        
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          git
+          tar
+          mingw64/mingw-w64-x86_64-gcc
+          mingw64/mingw-w64-x86_64-gcc-fortran
+          mingw64/mingw-w64-x86_64-cmake
+    #- run: git config --global core.autocrlf input
+    #  shell: bash
+    - uses: actions/checkout@v2
+    
+    - run: git describe --dirty
+        
+    - run: wget ${LAPACK_UPSTREAM}${LAPACK_VERSION}.tar.gz
+    
+    - run: tar xzf ${LAPACK_VERSION}.tar.gz
+    
+    - name: Build (cmake) and test (ctest)
+      run: |
+        cd lapack*
+        mkdir build
+        cd build
+        mkdir install
+        cmake -DCMAKE_INSTALL_LIBDIR=/home/lk12325/test/lapack-3.9.0/build/install/ .. -G"MSYS Makefiles" -DBUILD_TESTING=1
+        ctest
+        
+#     - name: Package up outputs
+#       run: |
+#         cd lapack*/build/install
+        
