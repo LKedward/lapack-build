@@ -57,6 +57,7 @@ jobs:
         cd build
         mkdir install
         /mingw64/bin/cmake -DCMAKE_INSTALL_LIBDIR=/home/lk12325/test/lapack-3.9.0/build/install/ .. -G"MSYS Makefiles" -DBUILD_TESTING=1
+        make -j install
         ctest
         
 #     - name: Package up outputs
