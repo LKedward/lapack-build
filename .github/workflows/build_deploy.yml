@@ -36,6 +36,7 @@ jobs:
         install: >-
           git
           tar
+          make
           mingw64/mingw-w64-x86_64-gcc
           mingw64/mingw-w64-x86_64-gcc-fortran
           mingw64/mingw-w64-x86_64-cmake
